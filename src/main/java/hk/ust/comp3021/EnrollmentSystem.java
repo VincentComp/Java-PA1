@@ -20,6 +20,32 @@ public class EnrollmentSystem {
      * to accommodate these guaranteed choices.
      */
     public void enrollFirstRound() {
+        for (Student this_student : students ){
+            List<String> Preference = this_student.getPreferences();
+            int Num_Preference = Preference.size();
+
+
+            if(Num_Preference == 0) //Note that some students may have no preference
+                continue;
+
+            if (Num_Preference == 1){
+                String preference_course1  = this_student.getPreferences().get(0); //get & enrolled course
+                courses.get(preference_course1).enroll(this_student);
+
+                //if(courses.get(preference_course1).enrolledStudents.size() > courses.get(preference_course1).capacity) //modify capacity
+                //    courses.get(preference_course1).capacity++;
+            }
+            /*
+            if (Num_Preference >= 2){
+                String preference_course2  = this_student.getPreferences().get(1);
+                courses.get(preference_course2).enrolledStudents.add(studentID);
+
+                if(courses.get(preference_course2).enrolledStudents.size() > courses.get(preference_course2).capacity)
+                    courses.get(preference_course2).capacity++;
+            }*/
+
+
+        }
     }
 
     /**
@@ -44,6 +70,7 @@ public class EnrollmentSystem {
      * @return the number of TAs required
      */
     public int findNumTA() {
+        return 0;//later defined
     }
 
     /**
@@ -54,6 +81,7 @@ public class EnrollmentSystem {
      * @return the number of students
      */
     public int findNumAllSuccess() {
+        return 0;//later defined
     }
 
     /**
@@ -64,6 +92,7 @@ public class EnrollmentSystem {
      * @return the list of StudentID
      */
     public List<String> findListNoCommonCore() {
+        return new ArrayList<String>(); //later defiend
     }
 
     public void parseStudents(String fileName) throws IOException {
@@ -71,12 +100,16 @@ public class EnrollmentSystem {
             String line;
             while ((line = br.readLine()) != null) {
                 // TODO: Task 1
-                String studentID = ;
-                String department = ;
-                int yearOfStudy = ;
-                double CGA = ;
-                List<String> preferences = ;
-                List<String> completedCourses = ;
+                String[] line_split = line.split(", ");
+
+                String studentID = line_split[0];
+                String department = line_split[1];
+                int yearOfStudy = Integer.parseInt(line_split[2]); //Note that String cannot directly convert to int
+                double CGA = Double.parseDouble(line_split[3]);
+                List<String> preferences = Arrays.asList(line_split[4].replaceAll("[\\[\\]]", "").split(", ")); //By ChatGPT : how to cast string with [] into list<string>
+                List<String> completedCourses = Arrays.asList(line_split[5].replaceAll("[\\[\\]]", "").split(", ")); //By ChatGPT : how to cast string with [] into list<string>
+
+                students.add(new Student(studentID,department,yearOfStudy,CGA,preferences,completedCourses)); //append the created students to the list
             }
         }
     }
@@ -86,6 +119,24 @@ public class EnrollmentSystem {
             String line;
             while ((line = br.readLine()) != null) {
                 // TODO: Task 1
+                String line_split[] = line.split(", ");
+
+                String keys = line_split[0]; //Map<keys,values>
+                String courseCode = line_split[0];
+                String department = line_split[1];
+
+                boolean isHonorsCourse;
+                List<String> Prerequisites;
+
+                if(line_split[2].equals("CommonCore")){
+                    isHonorsCourse = Boolean.parseBoolean(line_split[3]);
+                    courses.put(keys,new CommonCoreCourse(courseCode,department,isHonorsCourse));
+
+                }
+                else if(line_split[2].equals("Major")){
+                    Prerequisites = Arrays.asList(line_split[4].replaceAll("[\\[\\]]", "").split(", ")); //By ChatGPT : how to cast string with [] into list<
+                    courses.put(keys,new MajorCourse(courseCode,department,Prerequisites));
+                }
             }
         }
     }
@@ -116,10 +167,10 @@ public class EnrollmentSystem {
             system.parseStudents("student.txt");
             system.parseCourses("course.txt");
             system.enrollFirstRound();
-            system.writeCourseEnrollment("firstRoundEnrollment.txt");
-            system.enrollSecondRound();
-            system.writeCourseEnrollment("secondRoundEnrollment.txt");
-            system.writeCourseAnalysis("dataAnalytics.txt");
+            //system.writeCourseEnrollment("firstRoundEnrollment.txt");
+            //system.enrollSecondRound();
+            //system.writeCourseEnrollment("secondRoundEnrollment.txt");
+            //system.writeCourseAnalysis("dataAnalytics.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -11,13 +11,17 @@ public abstract class Course implements Enrollable {
     protected List<String> enrolledStudents;
     protected List<String> waitlist;
 
+
     /**
      * TODO: Task 2
      *
      * @param student the student being enrolled to the course
      */
     public void enroll(Student student) {
-
+        //modify capacity in Enrollment System.java
+        enrolledStudents.add(student.getStudentID());
+        if(enrolledStudents.size() > capacity)
+            capacity++;
     }
 
     /**

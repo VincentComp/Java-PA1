@@ -1,5 +1,6 @@
 package hk.ust.comp3021;
 
+import java.awt.font.NumericShaper;
 import java.io.*;
 import java.util.*;
 
@@ -77,7 +78,7 @@ public class EnrollmentSystem {
 
             List<Student> Major_Student = new ArrayList<>();
             List<Student> Non_Major_Student = new ArrayList<>();
-            for (Student this_student : students ) { //Match students to major & non-Major
+            for (Student this_student : students ) { //Match students to major & non-Major/common core
                 List<String> Preference = this_student.getPreferences();
                 int Num_Preference = Preference.size();
 
@@ -135,7 +136,15 @@ public class EnrollmentSystem {
      * @return the number of TAs required
      */
     public int findNumTA() {
-        return 0;//later defined
+        int Total_Num_TA = 0;
+        for(Map.Entry<String, Course> Course_set : courses.entrySet()){
+            Course this_course = Course_set.getValue();
+
+            int Number_Of_Student = this_course.enrolledStudents.size();
+            Total_Num_TA+= Math.ceil(Number_Of_Student/5.0); //Note that int/int = int ; less than 5, still count 5 (except 0)
+        }
+
+        return Total_Num_TA;
     }
 
     /**
@@ -146,7 +155,22 @@ public class EnrollmentSystem {
      * @return the number of students
      */
     public int findNumAllSuccess() {
-        return 0;//later defined
+        int Num_Success = 0;
+        for(Student s:students){//Scan all students
+
+            boolean Found_id_in_course = true;
+            for(String course_preference : s.getPreferences()){//Scan all preference of a student
+                if( (!course_preference.equals("")) && (courses.get(course_preference).enrolledStudents.indexOf(s.getStudentID()) == -1)){ //not "" && if the course has no specific SID
+                    Found_id_in_course = false;
+                    break;
+                }
+            }
+
+            if(Found_id_in_course)
+                Num_Success++;
+        }
+
+        return Num_Success;
     }
 
     /**
@@ -157,7 +181,23 @@ public class EnrollmentSystem {
      * @return the list of StudentID
      */
     public List<String> findListNoCommonCore() {
-        return new ArrayList<String>(); //later defiend
+        List <String> SID_list = new ArrayList<String>();
+
+        for(Student s: students){//Add all students to the list
+            SID_list.add(s.getStudentID());
+        }
+
+        for(Map.Entry<String, Course> Course_set : courses.entrySet()){//serach all common core course -> delete All the SID exist in the course
+            Course this_course = Course_set.getValue();
+            if(this_course instanceof CommonCoreCourse){
+                for(String SID : this_course.enrolledStudents){
+                        SID_list.remove(SID);
+                }
+            }
+
+        }
+
+        return SID_list;
     }
 
     public void parseStudents(String fileName) throws IOException {
@@ -235,7 +275,7 @@ public class EnrollmentSystem {
             system.writeCourseEnrollment("firstRoundEnrollment.txt");
             system.enrollSecondRound();
             system.writeCourseEnrollment("secondRoundEnrollment.txt");
-            //system.writeCourseAnalysis("dataAnalytics.txt");
+            system.writeCourseAnalysis("dataAnalytics.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -19,8 +19,8 @@ public class CommonCoreCourse extends Course {
 
     @Override
     public boolean enrollmentCriteria(Student s){
-        if(s.getCompletedCourses().indexOf(courseCode) != -1) //Studies before -> also return false
-            return false;
+        //if(s.getCompletedCourses().indexOf(courseCode) != -1) //Studies before -> also return false
+        //    return false;
 
 
         if(isHonorsCourse == true){

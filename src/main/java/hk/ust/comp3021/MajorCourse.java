@@ -23,8 +23,8 @@ public class MajorCourse extends Course{
     @Override
     public boolean enrollmentCriteria(Student s){
 
-        if(s.getCompletedCourses().indexOf(courseCode) != -1) //Studies before -> also return false
-            return false;
+        //if(s.getCompletedCourses().indexOf(courseCode) != -1) //Studies before -> also return false
+        //    return false;
 
         for(String this_prerequisites : Prerequisites){ //[has pre && not find in completed course] -> false
             if((!this_prerequisites.equals("")) && (s.getCompletedCourses().indexOf(this_prerequisites) == -1) ){

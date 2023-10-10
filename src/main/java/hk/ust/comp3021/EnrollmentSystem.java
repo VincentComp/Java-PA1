@@ -25,24 +25,25 @@ public class EnrollmentSystem {
             int Num_Preference = Preference.size();
 
 
-            if(Num_Preference == 0) //Note that some students may have no preference
-                continue;
 
-            if (Num_Preference == 1){
-                String preference_course1  = this_student.getPreferences().get(0); //get & enrolled course
+            if(Num_Preference == 1 && Preference.get(0) =="") //Note that some students may have no preference
+                continue;                                       //[] also conside as length = 1
+
+            if (Num_Preference >= 1){ //for Num_Preference >= 1
+                String preference_course1  = Preference.get(0); //get & enrolled course
                 courses.get(preference_course1).enroll(this_student);
 
-                //if(courses.get(preference_course1).enrolledStudents.size() > courses.get(preference_course1).capacity) //modify capacity
-                //    courses.get(preference_course1).capacity++;
+                if(courses.get(preference_course1).enrolledStudents.size() > courses.get(preference_course1).capacity) //modify capacity
+                   courses.get(preference_course1).capacity++;
             }
-            /*
-            if (Num_Preference >= 2){
-                String preference_course2  = this_student.getPreferences().get(1);
-                courses.get(preference_course2).enrolledStudents.add(studentID);
+
+            if (Num_Preference >= 2){ //for for Num_Preference >= 2
+                String preference_course2  = Preference.get(1);
+                courses.get(preference_course2).enroll(this_student);
 
                 if(courses.get(preference_course2).enrolledStudents.size() > courses.get(preference_course2).capacity)
                     courses.get(preference_course2).capacity++;
-            }*/
+            }
 
 
         }
@@ -106,8 +107,8 @@ public class EnrollmentSystem {
                 String department = line_split[1];
                 int yearOfStudy = Integer.parseInt(line_split[2]); //Note that String cannot directly convert to int
                 double CGA = Double.parseDouble(line_split[3]);
-                List<String> preferences = Arrays.asList(line_split[4].replaceAll("[\\[\\]]", "").split(", ")); //By ChatGPT : how to cast string with [] into list<string>
-                List<String> completedCourses = Arrays.asList(line_split[5].replaceAll("[\\[\\]]", "").split(", ")); //By ChatGPT : how to cast string with [] into list<string>
+                List<String> preferences = Arrays.asList(line_split[4].replaceAll("[\\[\\]]", "").split(" ")); //By ChatGPT : how to cast string with [] into list<string>
+                List<String> completedCourses = Arrays.asList(line_split[5].replaceAll("[\\[\\]]", "").split(" ")); //By ChatGPT : how to cast string with [] into list<string>
 
                 students.add(new Student(studentID,department,yearOfStudy,CGA,preferences,completedCourses)); //append the created students to the list
             }
@@ -134,7 +135,7 @@ public class EnrollmentSystem {
 
                 }
                 else if(line_split[2].equals("Major")){
-                    Prerequisites = Arrays.asList(line_split[4].replaceAll("[\\[\\]]", "").split(", ")); //By ChatGPT : how to cast string with [] into list<
+                    Prerequisites = Arrays.asList(line_split[4].replaceAll("[\\[\\]]", "").split(" ")); //By ChatGPT : how to cast string with [] into list<
                     courses.put(keys,new MajorCourse(courseCode,department,Prerequisites));
                 }
             }
@@ -167,7 +168,7 @@ public class EnrollmentSystem {
             system.parseStudents("student.txt");
             system.parseCourses("course.txt");
             system.enrollFirstRound();
-            //system.writeCourseEnrollment("firstRoundEnrollment.txt");
+            system.writeCourseEnrollment("firstRoundEnrollment.txt");
             //system.enrollSecondRound();
             //system.writeCourseEnrollment("secondRoundEnrollment.txt");
             //system.writeCourseAnalysis("dataAnalytics.txt");

@@ -20,8 +20,6 @@ public abstract class Course implements Enrollable {
     public void enroll(Student student) {
         //modify capacity in Enrollment System.java
         enrolledStudents.add(student.getStudentID());
-        if(enrolledStudents.size() > capacity)
-            capacity++;
     }
 
     /**

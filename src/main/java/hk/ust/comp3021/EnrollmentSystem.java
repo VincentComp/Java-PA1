@@ -61,6 +61,70 @@ public class EnrollmentSystem {
      * enrolling major courses and belong to the same department.
      */
     public void enrollSecondRound() {
+
+        //Get Max Number of Preferences
+        int Max_Num_Preferences = 0;
+        for (Student this_student : students ){
+            List<String> Preference = this_student.getPreferences();
+            int Num_Preference = Preference.size();
+            if(Num_Preference > Max_Num_Preferences)
+                Max_Num_Preferences = Num_Preference;
+        }
+
+
+        for(int i = 3; i <= Max_Num_Preferences; i++){//Num of preference for [3,Max_Num_Preferences]
+
+
+            List<Student> Major_Student = new ArrayList<>();
+            List<Student> Non_Major_Student = new ArrayList<>();
+            for (Student this_student : students ) { //Match students to major & non-Major
+                List<String> Preference = this_student.getPreferences();
+                int Num_Preference = Preference.size();
+
+                if (Num_Preference >= i){
+                    String preference_course = Preference.get(i-1);
+                    if(courses.get(preference_course).department.equals(this_student.getDepartment()) && (courses.get(preference_course) instanceof MajorCourse)) //If not major course -> just push to non_major students
+                        Major_Student.add(this_student);
+                    else
+                        Non_Major_Student.add(this_student);
+                }
+            }
+
+
+            for(Student s:Major_Student){ //Enroll for matching major
+                String preference_course  = s.getPreferences().get(i-1);
+                Course enrolling_course = courses.get(preference_course);
+
+                if(enrolling_course.enrollmentCriteria(s)) {//check fulfilled the requirement
+                    try {
+                        enrolling_course.enrollWithCondition(s); //check if full
+                        enrolling_course.enrolledStudents.add(s.getStudentID());//Not full:just add
+                    } catch(CourseFullException e) {
+                        enrolling_course.waitlist.add(s.getStudentID());//Full: add to waitlist
+                    }
+                }
+            }
+
+            for(Student s:Non_Major_Student){//enroll for non-matching major
+                String preference_course  = s.getPreferences().get(i-1);
+                Course enrolling_course = courses.get(preference_course);
+
+                if(enrolling_course.enrollmentCriteria(s)) {//check fulfilled the requirement
+                    try {
+                        enrolling_course.enrollWithCondition(s); //check if full
+                        enrolling_course.enrolledStudents.add(s.getStudentID());//Not full:just add
+                    } catch(CourseFullException e) {
+                        enrolling_course.waitlist.add(s.getStudentID());//Full: add to waitlist
+                    }
+                }
+            }
+
+
+
+
+        }
+
+
     }
 
     /**
@@ -169,8 +233,8 @@ public class EnrollmentSystem {
             system.parseCourses("course.txt");
             system.enrollFirstRound();
             system.writeCourseEnrollment("firstRoundEnrollment.txt");
-            //system.enrollSecondRound();
-            //system.writeCourseEnrollment("secondRoundEnrollment.txt");
+            system.enrollSecondRound();
+            system.writeCourseEnrollment("secondRoundEnrollment.txt");
             //system.writeCourseAnalysis("dataAnalytics.txt");
         } catch (IOException e) {
             e.printStackTrace();

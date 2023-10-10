@@ -20,14 +20,28 @@ public class Student {
         CompletedCourses = completedCourses;
     }
 
-    //Selft defined accessor
+    //Self defined accessor
     public List<String> getPreferences() {
         return Preferences;
     }
 
-    //Selft defined accessor
-
+    //Self defined accessor
     public String getStudentID() {
         return StudentID;
+    }
+
+    //Self defined accessor
+    public String getDepartment() {
+        return Department;
+    }
+
+    //Self defined accessor
+    public double getCGA() {
+        return CGA;
+    }
+
+    //Self defined accessor
+    public List<String> getCompletedCourses() {
+        return CompletedCourses;
     }
 }

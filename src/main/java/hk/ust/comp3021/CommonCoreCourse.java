@@ -19,11 +19,21 @@ public class CommonCoreCourse extends Course {
 
     @Override
     public boolean enrollmentCriteria(Student s){
-        return true; //implemented later
+        if(s.getCompletedCourses().indexOf(courseCode) != -1) //Studies before -> also return false
+            return false;
+
+
+        if(isHonorsCourse == true){
+            if(s.getCGA() < 3.5){
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
     public void enrollWithCondition(Student student) throws CourseFullException {
-        //later defined
+        if(capacity == enrolledStudents.size())
+            throw new CourseFullException();
     }
 }
